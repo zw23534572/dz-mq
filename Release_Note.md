@@ -22,6 +22,7 @@ private MQStartup mqStartup;
 ...
 mqStartup.init();
 ```
+后续会通过该方法增加参数配置，以适用不同系统的性能需求
 
 3、发送消息
 ```java

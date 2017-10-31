@@ -34,6 +34,17 @@ producer.sendMessage(message);
 ```
 发送时必须保证与调用者存在同一个事务中
 
+4、配置ElasticJob任务
+```java
+@Bean(initMethod = "init")
+public JobScheduler registryReTrySendJob(ReTrySendJob reTrySendJob) {
+    LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(new SimpleJobConfiguration(
+        JobCoreConfiguration.newBuilder(ReTrySendJob.class.getSimpleName(), "0 0/1 * * * ?", 1).build(),
+        ReTrySendJob.class.getCanonicalName())).overwrite(true).build();
+    return new SpringJobScheduler(reTrySendJob, regCenter, liteJobConfiguration);
+}
+```
+
 
 ### Release Note
 

@@ -2,12 +2,16 @@ package com.dazong.mq.domian;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @author huqichao
  * @create 2017-10-30 15:58
  **/
 @Data
+@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper=true)
 public class DZMessage {
 
     public static final int STATUS_未处理 = 0;

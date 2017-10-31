@@ -1,0 +1,1 @@
+alter table `dz_mq_producer` drop column update_time;

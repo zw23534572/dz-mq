@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dazong.mq.dao.mapper.MQMessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.dazong.mq.domian.DZMessage" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="body" property="body" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="topic" property="topic" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, status, body, event_id, topic
+    </sql>
+
+    <insert id="insertMessage" parameterType="com.dazong.mq.domian.DZMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into dz_mq_producer (event_id, body, status, topic) values (#{eventId}, #{body}, #{status}, #{topic})
+    </insert>
+
+    <update id="updateMessage" parameterType="com.dazong.mq.domian.DZMessage">
+        update dz_mq_producer set status=#{status} where id=#{id}
+    </update>
+
+    <select id="queryMessageByEventId" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List" />
+        from dz_mq_producer where event_id=#{eventId}
+    </select>
+
+    <select id="queryMessageByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from dz_mq_producer where status=#{status} order by create_time asc limit ${size}
+    </select>
+</mapper>

@@ -31,7 +31,6 @@ public class MQStartup {
     private DBManager dbManager;
 
     public void init() throws Exception {
-
         TableInfo tableInfo = dbManager.selectTable(DB_NAME, TABLE_NAME);
         String path;
         if (tableInfo == null) {

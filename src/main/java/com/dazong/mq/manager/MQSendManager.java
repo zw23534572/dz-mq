@@ -31,6 +31,8 @@ public class MQSendManager {
 
     private Logger logger = LoggerFactory.getLogger(MQSendManager.class);
 
+    private static final int SEND_MQ_BATCH = 20;
+
     @Autowired
     private MQMessageMapper messageMapper;
 
@@ -51,7 +53,7 @@ public class MQSendManager {
 
     @Scheduled(cron = "0 0/1 * * * ?")
     public void sendJob(){
-        List<DZMessage> messageList = messageMapper.queryMessageByStatus(DZMessage.STATUS_未处理, 50);
+        List<DZMessage> messageList = messageMapper.queryMessageByStatus(DZMessage.STATUS_未处理, SEND_MQ_BATCH);
         logger.debug("定时重发未发送成功的消息：{}", messageList.size());
         for (DZMessage message : messageList){
             send(message);

@@ -29,7 +29,7 @@ public class ActiveMQProducer extends AbstractProducer {
         Assert.notNull(message.getBody(), "消息内容不能空");
         Assert.notNull(message.getTopic(), "消息主题不能空");
         message.setEventId(UUID.randomUUID().toString());
-        message.setStatus(DZMessage.STATUS_未处理);
+        message.setStatus(DZMessage.STATUS_DOING);
         messageMapper.insertMessage(message);
 
         sendManager.send(message);

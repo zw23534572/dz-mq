@@ -14,8 +14,8 @@ import lombok.ToString;
 @ToString(callSuper=true)
 public class DZMessage {
 
-    public static final int STATUS_未处理 = 0;
-    public static final int STATUS_已处理 = 1;
+    public static final int STATUS_DOING = 0;
+    public static final int STATUS_DONE = 1;
 
 
     @JSONField(serialize = false)

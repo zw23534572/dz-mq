@@ -36,7 +36,7 @@ public class ReTrySendJob implements SimpleJob {
      */
     @Override
     public void execute(ShardingContext shardingContext) {
-        List<DZMessage> messageList = messageMapper.queryMessageByStatus(DZMessage.STATUS_未处理, SEND_MQ_BATCH);
+        List<DZMessage> messageList = messageMapper.queryMessageByStatus(DZMessage.STATUS_DOING, SEND_MQ_BATCH);
         logger.debug("定时重发未发送成功的消息：{}", messageList.size());
         for (DZMessage message : messageList){
             mqSendManager.send(message);

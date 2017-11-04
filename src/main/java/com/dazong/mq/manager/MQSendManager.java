@@ -1,32 +1,22 @@
 package com.dazong.mq.manager;
 
 import com.alibaba.fastjson.JSON;
+import com.dazong.mq.constant.Constants;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
 import com.dazong.mq.domian.DZMessage;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
-import org.springframework.jms.core.MessagePostProcessor;
-import org.springframework.jms.core.ProducerCallback;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import java.util.List;
+import org.springframework.stereotype.Component;
 
 /**
  * @author huqichao
  * @create 2017-10-31 09:47
  **/
-@Configuration
-@EnableScheduling
+@Component
 public class MQSendManager {
 
     private Logger logger = LoggerFactory.getLogger(MQSendManager.class);
@@ -41,7 +31,8 @@ public class MQSendManager {
     public void send(final DZMessage message){
         try {
             logger.debug("发送消息------>topic:{}, eventId:{}, body:{}", message.getTopic(), message.getEventId(), message.getBody());
-            jmsTemplate.convertAndSend(message.getTopic(), JSON.toJSONString(message));
+            ActiveMQTopic topic = new ActiveMQTopic(Constants.TOPIC_PREFIX + message.getTopic());
+            jmsTemplate.convertAndSend(topic, JSON.toJSONString(message));
             message.setStatus(DZMessage.STATUS_DONE);
             messageMapper.updateMessage(message);
         } catch (Exception e) {

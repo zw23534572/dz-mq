@@ -1,5 +1,6 @@
 package com.dazong.mq.activemq;
 
+import com.dazong.mq.constant.Constants;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
@@ -26,7 +27,7 @@ public class ActivemqConsumer {
         Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
 
         // Create the destination (Topic or Queue)
-        Destination destination = session.createQueue("test11");
+        Destination destination = session.createQueue("aaa." + Constants.TOPIC_PREFIX + "test11");
 
         // Create a MessageConsumer from the Session to the Topic or Queue
         MessageConsumer consumer = session.createConsumer(destination);
@@ -49,11 +50,11 @@ public class ActivemqConsumer {
                         e.printStackTrace();
                     }
                 }
-//                try {
-//                    message.acknowledge();
-//                } catch (JMSException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    message.acknowledge();
+                } catch (JMSException e) {
+                    e.printStackTrace();
+                }
             }
         });
 //        consumer.close();

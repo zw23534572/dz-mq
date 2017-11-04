@@ -8,14 +8,32 @@
         <result column="body" property="body" jdbcType="VARCHAR" />
         <result column="event_id" property="eventId" jdbcType="VARCHAR" />
         <result column="topic" property="topic" jdbcType="VARCHAR" />
+        <result column="send_time" property="sendTime" jdbcType="BIGINT" />
+    </resultMap>
+
+    <resultMap id="ConsumerResultMap" type="com.dazong.mq.domian.DZMessage" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="body" property="body" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="topic" property="topic" jdbcType="VARCHAR" />
+        <result column="send_time" property="sendTime" jdbcType="BIGINT" />
+        <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+        <result column="notify_count" property="sendTime" jdbcType="INTEGER" />
+        <result column="last_notify_time" property="sendTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, status, body, event_id, topic
+        id, status, body, event_id, topic, send_time
+    </sql>
+
+    <sql id="Consumer_Column_List">
+        id, status, body, `name`, event_id, topic, send_time, receive_time, notify_count, last_notify_time
     </sql>
 
     <insert id="insertMessage" parameterType="com.dazong.mq.domian.DZMessage" useGeneratedKeys="true" keyProperty="id">
-        insert into dz_mq_producer (event_id, body, status, topic) values (#{eventId}, #{body}, #{status}, #{topic})
+        insert into dz_mq_producer (event_id, body, status, topic, send_time) values (#{eventId}, #{body}, #{status}, #{topic}, #{sendTime})
     </insert>
 
     <update id="updateMessage" parameterType="com.dazong.mq.domian.DZMessage">
@@ -31,6 +49,23 @@
     <select id="queryMessageByStatus" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from dz_mq_producer where status=#{status} order by create_time asc limit ${size}
+        from dz_mq_producer where status=#{status} order by create_time asc limit #{size}
+    </select>
+
+
+
+    <insert id="insertConsumerMessage" parameterType="com.dazong.mq.domian.DZConsumerMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into dz_mq_consumer (event_id, body, `name`, status, topic, send_time, receive_time, notify_count, last_notify_time)
+        values (#{eventId}, #{body}, #{name}, #{status}, #{topic}, #{sendTime}, #{receivetime}, #{notifyCount}, #{lastNotifyTime})
+    </insert>
+
+    <update id="updateConsumerMessage" parameterType="com.dazong.mq.domian.DZConsumerMessage">
+        update dz_mq_consumer set `name`=#{name},status=#{status}, notify_count=#{notifyCount}, last_notify_time=#{lastNotifyTime} where id=#{id}
+    </update>
+
+    <select id="queryConsumerMessageByStatus" resultMap="ConsumerResultMap">
+        select
+        <include refid="Consumer_Column_List" />
+        from dz_mq_consumer where status=#{status} order by create_time asc limit 1
     </select>
 </mapper>

@@ -5,7 +5,7 @@ import com.dazong.mq.domian.DZMessage;
 import com.dazong.mq.core.producer.AbstractProducer;
 import com.dazong.mq.manager.MQSendManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.UUID;
@@ -14,7 +14,7 @@ import java.util.UUID;
  * @author huqichao
  * @create 2017-10-30 15:32
  **/
-@Service
+@Component
 public class ActiveMQProducer extends AbstractProducer {
 
     @Autowired
@@ -30,6 +30,7 @@ public class ActiveMQProducer extends AbstractProducer {
         Assert.notNull(message.getTopic(), "消息主题不能空");
         message.setEventId(UUID.randomUUID().toString());
         message.setStatus(DZMessage.STATUS_DOING);
+        message.setSendTime(System.currentTimeMillis());
         messageMapper.insertMessage(message);
 
         sendManager.send(message);

@@ -1,5 +1,6 @@
 package com.dazong.mq.activemq;
 
+import com.dazong.mq.constant.Constants;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
@@ -21,7 +22,8 @@ public class ActivemqSend {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         // Create the destination (Topic or Queue)
-        Destination destination = session.createQueue("TEST.FOO");
+//        Destination destination = session.createQueue("test11");
+        Destination destination = session.createTopic(Constants.TOPIC_PREFIX + "test11");
 
         // Create a MessageProducer from the Session to the Topic or Queue
         MessageProducer producer = session.createProducer(destination);

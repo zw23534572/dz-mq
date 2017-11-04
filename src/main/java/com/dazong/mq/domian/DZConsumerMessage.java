@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.Date;
+
 /**
  * @author huqichao
  * @create 2017-10-30 15:58
@@ -12,13 +14,15 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper=true)
-public class DZMessage {
+public class DZConsumerMessage {
 
     public static final int STATUS_DOING = 0;
     public static final int STATUS_DONE = 1;
 
     @JSONField(serialize = false)
     private Long id;
+
+    private String name;
 
     private String eventId;
 
@@ -33,14 +37,22 @@ public class DZMessage {
     /**接收到发送消息的时间*/
     private Long sendTime;
 
-    public DZMessage(){}
+    /**接收到消息的时间*/
+    private Long receiveTime;
 
-    public DZMessage(String topic, String body){
-        this.topic = topic;
-        this.body = body;
-    }
+    private Integer notifyCount;
 
-    public static DZMessage wrap(String topic, String body) {
-        return new DZMessage(topic, body);
+    private Date lastNotifyTime;
+
+    public DZConsumerMessage(){}
+
+    public DZConsumerMessage(DZMessage message){
+        this.topic = message.getTopic();
+        this.body = message.getBody();
+        this.eventId = message.getEventId();
+        this.sendTime = message.getSendTime();
+        this.notifyCount = 1;
+        this.lastNotifyTime = new Date();
+        this.receiveTime = System.currentTimeMillis();
     }
 }

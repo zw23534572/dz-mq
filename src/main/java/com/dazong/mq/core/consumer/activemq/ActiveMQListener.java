@@ -57,7 +57,7 @@ public class ActiveMQListener implements MessageListener {
             if (dzMessage.isImmediate()){
                 List<DZConsumerMessage> groupList = messageMapper.queryConsumerMessageByGroupId(consumerMessage.getGroupId(),
                         consumerMessage.getName(), DZConsumerMessage.STATUS_DOING);
-                if (groupList.size() > 1){
+                if (groupList.size() <= 1){
                     notifyManager.notifyMessage(listener, consumerMessage);
                 }
             }

@@ -2,7 +2,7 @@ package com.dazong.mq;
 
 import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.core.consumer.IMessageListener;
-import com.dazong.mq.core.consumer.activemq.ActiveMQConumer;
+import com.dazong.mq.core.consumer.activemq.ActiveMQConsumer;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
 import com.dazong.mq.domian.TableInfo;
 import com.dazong.mq.manager.DBManager;
@@ -65,7 +65,7 @@ public class MQAutoConfiguration implements ApplicationContextAware {
             }
         }
         addListener();
-        new ActiveMQConumer(jmsTemplate, mqNotifyManager, messageMapper).init();
+        new ActiveMQConsumer(jmsTemplate, mqNotifyManager, messageMapper).init();
     }
 
     private void addListener(){

@@ -26,6 +26,8 @@ public class DZConsumerMessage {
 
     private String eventId;
 
+    private String groupId;
+
     private String body;
 
     @JSONField(serialize = false)
@@ -50,6 +52,7 @@ public class DZConsumerMessage {
         this.topic = message.getTopic();
         this.body = message.getBody();
         this.eventId = message.getEventId();
+        this.groupId = message.getGroupId();
         this.sendTime = message.getSendTime();
         this.notifyCount = 1;
         this.lastNotifyTime = new Date();

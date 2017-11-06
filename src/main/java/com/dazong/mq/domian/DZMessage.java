@@ -22,6 +22,10 @@ public class DZMessage {
 
     private String eventId;
 
+    private String groupId;
+
+    private boolean immediate;
+
     private String body;
 
     @JSONField(serialize = false)
@@ -40,7 +44,18 @@ public class DZMessage {
         this.body = body;
     }
 
+    public DZMessage(String topic, String body, String groupId){
+        this.topic = topic;
+        this.body = body;
+        this.groupId = groupId;
+    }
+
     public static DZMessage wrap(String topic, String body) {
         return new DZMessage(topic, body);
+    }
+
+    public static DZMessage wrap(String topic, String body, String groupId) {
+
+        return new DZMessage(topic, body, groupId);
     }
 }

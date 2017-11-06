@@ -25,4 +25,11 @@ public interface MQMessageMapper {
     void updateConsumerMessage(DZConsumerMessage message);
 
     List<DZConsumerMessage> queryConsumerMessageByStatus(@Param("status") int status);
+
+    DZConsumerMessage queryConsumerMessageByEventId(@Param("eventId") String eventId,
+                                                    @Param("name") String name);
+
+    List<DZConsumerMessage> queryConsumerMessageByGroupId(@Param("groupId") String groupId,
+                                                          @Param("name") String name,
+                                                          @Param("status") int status);
 }

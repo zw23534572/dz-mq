@@ -16,12 +16,12 @@ public class ActivemqConsumer {
         Connection connection = connectionFactory.createConnection();
         connection.start();
 
-        connection.setExceptionListener(new ExceptionListener() {
-            @Override
-            public void onException(JMSException e) {
-                System.out.println("JMS Exception occured.  Shutting down client.");
-            }
-        });
+//        connection.setExceptionListener(new ExceptionListener() {
+//            @Override
+//            public void onException(JMSException e) {
+//                System.out.println("JMS Exception occured.  Shutting down client.");
+//            }
+//        });
 
         // Create a Session
         Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);

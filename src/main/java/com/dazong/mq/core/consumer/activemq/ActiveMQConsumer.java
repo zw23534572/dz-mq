@@ -15,7 +15,7 @@ import java.util.Map;
  * @author huqichao
  * @create 2017-11-03 09:32
  **/
-public class ActiveMQConumer extends AbstractConsumer {
+public class ActiveMQConsumer extends AbstractConsumer {
 
     private JmsTemplate jmsTemplate;
 
@@ -23,30 +23,27 @@ public class ActiveMQConumer extends AbstractConsumer {
 
     private MQMessageMapper messageMapper;
 
-    public ActiveMQConumer(JmsTemplate jmsTemplate, MQNotifyManager notifyManager, MQMessageMapper messageMapper){
+    public ActiveMQConsumer(JmsTemplate jmsTemplate, MQNotifyManager notifyManager, MQMessageMapper messageMapper){
         this.jmsTemplate = jmsTemplate;
         this.notifyManager = notifyManager;
         this.messageMapper = messageMapper;
     }
 
     public void init() throws Exception {
+        Connection connection = jmsTemplate.getConnectionFactory().createConnection();
+        connection.start();
+
+        // Create a Session
+        Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+
         Map<Subscribe, IMessageListener> listenerMap = notifyManager.getListenerMap();
         for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()) {
             Subscribe subscribe = entry.getKey();
             if (subscribe.type().equals(Constants.TYPE_ACTIVEMQ)){
-                Connection connection = jmsTemplate.getConnectionFactory().createConnection();
-                connection.setExceptionListener(new ExceptionListener() {
-                    @Override
-                    public void onException(JMSException e) {
-                        logger.error("JMS Exception occured.  Shutting down client.", e);
-                    }
-                });
-                // Create a Session
-                Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                Destination destination = session.createQueue(subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic());
+                String queueName = Constants.CONSUMER_PREFIX + subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic();
+                Destination destination = session.createQueue(queueName);
                 MessageConsumer consumer = session.createConsumer(destination);
-                consumer.setMessageListener(new ActiveMQListener(messageMapper, notifyManager, entry.getValue()));
-                connection.start();
+                consumer.setMessageListener(new ActiveMQListener(messageMapper, notifyManager, entry.getValue(), subscribe.name()));
             }
         }
     }

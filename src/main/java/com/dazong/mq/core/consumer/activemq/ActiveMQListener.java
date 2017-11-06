@@ -13,6 +13,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import java.util.List;
 
 /**
  * @author huqichao
@@ -28,10 +29,13 @@ public class ActiveMQListener implements MessageListener {
 
     private IMessageListener listener;
 
-    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener){
+    private String name;
+
+    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener, String name){
         this.messageMapper = messageMapper;
         this.notifyManager = notifyManager;
         this.listener = listener;
+        this.name = name;
     }
 
     @Override
@@ -39,10 +43,22 @@ public class ActiveMQListener implements MessageListener {
         TextMessage textMessage = (TextMessage) message;
         try {
             DZMessage dzMessage = JSON.parseObject(textMessage.getText(), DZMessage.class);
-            DZConsumerMessage consumerMessage = new DZConsumerMessage(dzMessage);
-
+            DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), name);
+            if (consumerMessage != null){
+                logger.debug("已有消费端消费该消息: {}", dzMessage.getEventId());
+                return;
+            }
+            consumerMessage = new DZConsumerMessage(dzMessage);
+            consumerMessage.setName(name);
             messageMapper.insertConsumerMessage(consumerMessage);
-            notifyManager.notifyMessage(listener, consumerMessage);
+            //判断该消息是否立即通知，如果是，则判断除了当前消息，该消息组中是否还有未处理的消息
+            if (dzMessage.isImmediate()){
+                List<DZConsumerMessage> groupList = messageMapper.queryConsumerMessageByGroupId(consumerMessage.getGroupId(), name, DZConsumerMessage.STATUS_DOING);
+                if (groupList.size() > 1){
+                    notifyManager.notifyMessage(listener, consumerMessage);
+                }
+            }
+            message.acknowledge();
         } catch (JMSException e) {
             logger.error("接收消息失败", e);
         }

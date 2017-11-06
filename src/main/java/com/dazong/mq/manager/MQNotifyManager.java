@@ -30,7 +30,7 @@ public class MQNotifyManager {
     @Async
     public void notifyMessage(final DZConsumerMessage message){
         try {
-            logger.debug("接收消息------>topic:{}, eventId:{}, body:{}", message.getTopic(), message.getEventId(), message.getBody());
+            logger.debug("接收消息------>{}", message);
             IMessageListener listener = null;
             for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()){
                 if (entry.getKey().topic().equals(message.getTopic()) && entry.getKey().name().equals(message.getName())){
@@ -57,7 +57,7 @@ public class MQNotifyManager {
     @Async
     public void notifyMessage(final IMessageListener listener, final DZConsumerMessage message){
         try {
-            logger.debug("接收消息------>topic:{}, eventId:{}, body:{}", message.getTopic(), message.getEventId(), message.getBody());
+            logger.debug("接收消息------>{}", message);
             listener.receive(message.getBody());
             message.setStatus(DZMessage.STATUS_DONE);
             messageMapper.updateConsumerMessage(message);

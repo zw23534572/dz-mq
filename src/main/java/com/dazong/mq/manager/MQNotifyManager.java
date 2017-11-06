@@ -48,9 +48,10 @@ public class MQNotifyManager {
             listener.receive(message.getBody());
 
             message.setStatus(DZMessage.STATUS_DONE);
-            messageMapper.updateConsumerMessage(message);
         } catch (Exception e) {
             logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
+        } finally {
+            messageMapper.updateConsumerMessage(message);
         }
     }
 
@@ -60,9 +61,10 @@ public class MQNotifyManager {
             logger.debug("接收消息------>{}", message);
             listener.receive(message.getBody());
             message.setStatus(DZMessage.STATUS_DONE);
-            messageMapper.updateConsumerMessage(message);
         } catch (Exception e) {
             logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
+        } finally {
+            messageMapper.updateConsumerMessage(message);
         }
     }
 

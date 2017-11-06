@@ -64,13 +64,13 @@
     </insert>
 
     <update id="updateConsumerMessage" parameterType="com.dazong.mq.domian.DZConsumerMessage">
-        update dz_mq_consumer set `name`=#{name},status=#{status}, notify_count=#{notifyCount}, last_notify_time=#{lastNotifyTime} where id=#{id}
+        update dz_mq_consumer set `name`=#{name}, status=#{status}, notify_count=notify_count+1, last_notify_time=now() where id=#{id}
     </update>
 
     <select id="queryConsumerMessageByStatus" resultMap="ConsumerResultMap">
         select
         <include refid="Consumer_Column_List" />
-        from dz_mq_consumer where status=#{status} group by group_id order by create_time asc limit 1
+        from dz_mq_consumer where status=#{status} group by group_id,`name` order by receive_time asc
     </select>
 
     <select id="queryConsumerMessageByEventId" resultMap="ConsumerResultMap">

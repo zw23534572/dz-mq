@@ -1,6 +1,7 @@
 package com.dazong.mq.core.consumer.activemq;
 
 import com.alibaba.fastjson.JSON;
+import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.core.consumer.IMessageListener;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
 import com.dazong.mq.domian.DZConsumerMessage;
@@ -29,13 +30,13 @@ public class ActiveMQListener implements MessageListener {
 
     private IMessageListener listener;
 
-    private String name;
+    private Subscribe subscribe;
 
-    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener, String name){
+    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener, Subscribe subscribe){
         this.messageMapper = messageMapper;
         this.notifyManager = notifyManager;
         this.listener = listener;
-        this.name = name;
+        this.subscribe = subscribe;
     }
 
     @Override
@@ -43,17 +44,19 @@ public class ActiveMQListener implements MessageListener {
         TextMessage textMessage = (TextMessage) message;
         try {
             DZMessage dzMessage = JSON.parseObject(textMessage.getText(), DZMessage.class);
-            DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), name);
+            DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), subscribe.name());
             if (consumerMessage != null){
                 logger.debug("已有消费端消费该消息: {}", dzMessage.getEventId());
                 return;
             }
             consumerMessage = new DZConsumerMessage(dzMessage);
-            consumerMessage.setName(name);
+            consumerMessage.setName(subscribe.name());
+            consumerMessage.setTopic(subscribe.topic());
             messageMapper.insertConsumerMessage(consumerMessage);
             //判断该消息是否立即通知，如果是，则判断除了当前消息，该消息组中是否还有未处理的消息
             if (dzMessage.isImmediate()){
-                List<DZConsumerMessage> groupList = messageMapper.queryConsumerMessageByGroupId(consumerMessage.getGroupId(), name, DZConsumerMessage.STATUS_DOING);
+                List<DZConsumerMessage> groupList = messageMapper.queryConsumerMessageByGroupId(consumerMessage.getGroupId(),
+                        consumerMessage.getName(), DZConsumerMessage.STATUS_DOING);
                 if (groupList.size() > 1){
                     notifyManager.notifyMessage(listener, consumerMessage);
                 }

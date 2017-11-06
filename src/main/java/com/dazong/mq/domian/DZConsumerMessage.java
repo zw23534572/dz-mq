@@ -54,8 +54,7 @@ public class DZConsumerMessage {
         this.eventId = message.getEventId();
         this.groupId = message.getGroupId();
         this.sendTime = message.getSendTime();
-        this.notifyCount = 1;
-        this.lastNotifyTime = new Date();
+        this.notifyCount = 0;
         this.receiveTime = System.currentTimeMillis();
     }
 }

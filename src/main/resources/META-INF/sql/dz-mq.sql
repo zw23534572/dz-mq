@@ -26,7 +26,7 @@ CREATE TABLE `dz_mq_consumer` (
   `send_time` bigint(20) NOT NULL,
   `receive_time` bigint(20) NOT NULL,
   `notify_count` int(11) NOT NULL,
-  `last_notify_time` datetime(3) NOT NULL,
+  `last_notify_time` datetime(3) DEFAULT NULL,
   `create_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `update_time` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`)

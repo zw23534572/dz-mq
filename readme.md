@@ -4,6 +4,7 @@
 
 ### 简介
 目前支持发送消息时的可靠性，通过发送时本地事务来保证可靠性。以及一定限度的按照发送时间顺序通知消费者
+
 ![时序图](https://git.dazong.com/TradeDept/dz-mq/uploads/1a61ee27d385bf8b42d18f4b103403ea/mq.png)
 
 ### 使用说明

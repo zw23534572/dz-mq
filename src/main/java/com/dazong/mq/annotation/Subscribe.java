@@ -1,5 +1,6 @@
 package com.dazong.mq.annotation;
 
+import com.dazong.mq.constant.SubscribeType;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -15,5 +16,5 @@ public @interface Subscribe {
 
 	String name();
 
-	String type() default "activemq";
+	SubscribeType type() default SubscribeType.ACTIVEMQ;
 }

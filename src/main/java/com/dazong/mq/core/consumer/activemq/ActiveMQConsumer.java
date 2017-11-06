@@ -2,6 +2,7 @@ package com.dazong.mq.core.consumer.activemq;
 
 import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.constant.Constants;
+import com.dazong.mq.constant.SubscribeType;
 import com.dazong.mq.core.consumer.AbstractConsumer;
 import com.dazong.mq.core.consumer.IMessageListener;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
@@ -39,7 +40,7 @@ public class ActiveMQConsumer extends AbstractConsumer {
         Map<Subscribe, IMessageListener> listenerMap = notifyManager.getListenerMap();
         for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()) {
             Subscribe subscribe = entry.getKey();
-            if (subscribe.type().equals(Constants.TYPE_ACTIVEMQ)){
+            if (subscribe.type().equals(SubscribeType.ACTIVEMQ)){
                 String queueName = Constants.CONSUMER_PREFIX + subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic();
                 Destination destination = session.createQueue(queueName);
                 MessageConsumer consumer = session.createConsumer(destination);

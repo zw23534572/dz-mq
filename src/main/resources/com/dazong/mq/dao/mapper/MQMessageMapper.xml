@@ -70,7 +70,7 @@
     <select id="queryConsumerMessageByStatus" resultMap="ConsumerResultMap">
         select
         <include refid="Consumer_Column_List" />
-        from dz_mq_consumer where status=#{status} group by group_id,`name` order by receive_time asc
+        from dz_mq_consumer where status=#{status} group by group_id,`name` order by send_time asc
     </select>
 
     <select id="queryConsumerMessageByEventId" resultMap="ConsumerResultMap">

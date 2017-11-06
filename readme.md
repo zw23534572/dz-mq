@@ -15,16 +15,7 @@
 </dependency>
 ```
 
-2、在系统启动时，初始化dz-mq
-```java
-@Autowired
-private MQStartup mqStartup;
-...
-mqStartup.init();
-```
-后续会通过该方法增加参数配置，以适用不同系统的性能需求
-
-3、发送消息
+2、发送消息
 ```java
 @Autowired
 private ActiveMQProducer producer;
@@ -34,6 +25,17 @@ producer.sendMessage(message);
 ```
 发送时必须保证与调用者存在同一个事务中
 
+3、接收消息
+```java
+@Subscribe(topic = "test11", name = "Pay")
+public class PayMQ implements IMessageListener {
+    @Override
+    public void receive(String message) {
+        //TODO
+    }
+}
+```
+
 4、配置ElasticJob任务
 ```java
 @Bean(initMethod = "init")
@@ -42,6 +44,14 @@ public JobScheduler registryReTrySendJob(ReTrySendJob reTrySendJob) {
         JobCoreConfiguration.newBuilder(ReTrySendJob.class.getSimpleName(), "0 0/1 * * * ?", 1).build(),
         ReTrySendJob.class.getCanonicalName())).overwrite(true).build();
     return new SpringJobScheduler(reTrySendJob, regCenter, liteJobConfiguration);
+}
+
+@Bean(initMethod = "init")
+public JobScheduler registryReTryNotifyJob(ReTryNotifyJob reTryNotifyJob) {
+    LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(new SimpleJobConfiguration(
+        JobCoreConfiguration.newBuilder(ReTryNotifyJob.class.getSimpleName(), "0 0/5 * * * ?", 1).build(),
+        ReTryNotifyJob.class.getCanonicalName())).overwrite(true).build();
+    return new SpringJobScheduler(reTryNotifyJob, regCenter, liteJobConfiguration);
 }
 ```
 

@@ -1,6 +1,7 @@
 package com.dazong.mq.domian;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.dazong.mq.dao.mapper.MQMessageMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,31 +21,31 @@ public class DZConsumerMessage {
     public static final int STATUS_DONE = 1;
 
     @JSONField(serialize = false)
-    private Long id;
+    protected Long id;
 
-    private String name;
+    protected String name;
 
-    private String eventId;
+    protected String eventId;
 
-    private String groupId;
+    protected String groupId;
 
-    private String body;
-
-    @JSONField(serialize = false)
-    private int status;
+    protected String body;
 
     @JSONField(serialize = false)
-    private String topic;
+    protected int status;
+
+    @JSONField(serialize = false)
+    protected String topic;
 
     /**接收到发送消息的时间*/
-    private Long sendTime;
+    protected Long sendTime;
 
     /**接收到消息的时间*/
-    private Long receiveTime;
+    protected Long receiveTime;
 
-    private Integer notifyCount;
+    protected Integer notifyCount;
 
-    private Date lastNotifyTime;
+    protected Date lastNotifyTime;
 
     public DZConsumerMessage(){}
 
@@ -56,5 +57,14 @@ public class DZConsumerMessage {
         this.sendTime = message.getSendTime();
         this.notifyCount = 0;
         this.receiveTime = System.currentTimeMillis();
+    }
+
+    public Message copy(MQMessageMapper messageMapper){
+        Message message = new Message();
+        message.id = id;
+        message.body = body;
+        message.messageMapper = messageMapper;
+
+        return message;
     }
 }

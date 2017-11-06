@@ -39,15 +39,12 @@ public class MQNotifyManager {
                 }
             }
             if (listener == null){
-                logger.warn("没有 Listener 监听 {} 消息", message.getTopic());
-                message.setStatus(DZMessage.STATUS_DONE);
-                messageMapper.updateConsumerMessage(message);
+                logger.warn("没有 Listener 监听 {} 消息", message);
+                messageMapper.updateStatusById(message.getId(), DZMessage.STATUS_DONE);
                 return;
             }
 
-            listener.receive(message.getBody());
-
-            message.setStatus(DZMessage.STATUS_DONE);
+            listener.receive(message.copy(messageMapper));
         } catch (Exception e) {
             logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
         } finally {
@@ -59,8 +56,7 @@ public class MQNotifyManager {
     public void notifyMessage(final IMessageListener listener, final DZConsumerMessage message){
         try {
             logger.debug("接收消息------>{}", message);
-            listener.receive(message.getBody());
-            message.setStatus(DZMessage.STATUS_DONE);
+            listener.receive(message.copy(messageMapper));
         } catch (Exception e) {
             logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
         } finally {

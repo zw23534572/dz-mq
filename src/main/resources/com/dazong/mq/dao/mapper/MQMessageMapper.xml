@@ -64,7 +64,11 @@
     </insert>
 
     <update id="updateConsumerMessage" parameterType="com.dazong.mq.domian.DZConsumerMessage">
-        update dz_mq_consumer set `name`=#{name}, status=#{status}, notify_count=notify_count+1, last_notify_time=now() where id=#{id}
+        update dz_mq_consumer set notify_count=notify_count+1, last_notify_time=now() where id=#{id}
+    </update>
+
+    <update id="updateStatusById">
+        update dz_mq_consumer set status=#{status} where id=#{id}
     </update>
 
     <select id="queryConsumerMessageByStatus" resultMap="ConsumerResultMap">

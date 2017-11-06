@@ -47,6 +47,7 @@ public class ActiveMQListener implements MessageListener {
             DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), subscribe.name());
             if (consumerMessage != null){
                 logger.debug("已有消费端消费该消息: {}", dzMessage.getEventId());
+                message.acknowledge();
                 return;
             }
             consumerMessage = new DZConsumerMessage(dzMessage);

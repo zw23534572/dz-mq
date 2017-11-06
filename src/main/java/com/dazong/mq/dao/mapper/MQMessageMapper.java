@@ -32,4 +32,6 @@ public interface MQMessageMapper {
     List<DZConsumerMessage> queryConsumerMessageByGroupId(@Param("groupId") String groupId,
                                                           @Param("name") String name,
                                                           @Param("status") int status);
+
+    void updateStatusById(@Param("id") Long id, @Param("status") int status);
 }

@@ -55,7 +55,6 @@ public class DZMessage {
     }
 
     public static DZMessage wrap(String topic, String body, String groupId) {
-
         return new DZMessage(topic, body, groupId);
     }
 }

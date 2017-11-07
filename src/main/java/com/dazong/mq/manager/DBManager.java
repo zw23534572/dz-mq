@@ -88,7 +88,6 @@ public class DBManager {
                 runner.closeConnection();
             }
         }
-
     }
 
     private void updateTableVersion(Connection conn, TableInfo tableInfo, int version) throws Exception {

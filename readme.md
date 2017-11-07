@@ -17,7 +17,12 @@
 </dependency>
 ```
 
-2、发送消息
+2、在应用properties的文件中配置应用数据库名
+```properties
+db.name=数据库名
+```
+
+3、发送消息
 ```java
 @Autowired
 private ActiveMQProducer producer;
@@ -27,7 +32,7 @@ producer.sendMessage(message);
 ```
 发送时必须保证与调用者存在同一个事务中
 
-3、接收消息
+4、接收消息
 ```java
 @Subscribe(topic = "test11", name = "Pay")
 public class PayMQ implements IMessageListener {
@@ -38,7 +43,7 @@ public class PayMQ implements IMessageListener {
 }
 ```
 
-4、配置ElasticJob任务
+5、配置ElasticJob任务
 ```java
 @Bean(initMethod = "init")
 public JobScheduler registryReTrySendJob(ReTrySendJob reTrySendJob) {

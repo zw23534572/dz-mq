@@ -14,6 +14,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -30,7 +31,6 @@ public class MQAutoConfiguration implements ApplicationContextAware {
 //    private static final int SQL_VERSION = 1;
     private static final int SQL_VERSION = 0;
 
-    private static final String DB_NAME = "trade_hermes";
     private static final String TABLE_NAME = "dz_mq_producer";
 
     @Autowired
@@ -47,8 +47,11 @@ public class MQAutoConfiguration implements ApplicationContextAware {
     @Autowired
     private JmsTemplate jmsTemplate;
 
+    @Value("${db.name}")
+    private String dbName;
+
     private void init() throws Exception {
-        TableInfo tableInfo = dbManager.selectTable(DB_NAME, TABLE_NAME);
+        TableInfo tableInfo = dbManager.selectTable(dbName, TABLE_NAME);
         String path;
         if (tableInfo == null) {
             path = "META-INF/sql/dz-mq.sql";

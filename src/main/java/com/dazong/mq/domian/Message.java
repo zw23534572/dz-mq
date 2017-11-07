@@ -23,6 +23,10 @@ public class Message {
         return this.body;
     }
 
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     public void acknowledge(){
         messageMapper.updateStatusById(id, DZConsumerMessage.STATUS_DONE);
         logger.debug("ack event id: {}", id);

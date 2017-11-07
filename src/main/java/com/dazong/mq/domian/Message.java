@@ -28,7 +28,11 @@ public class Message {
     }
 
     public void acknowledge(){
-        messageMapper.updateStatusById(id, DZConsumerMessage.STATUS_DONE);
-        logger.debug("ack event id: {}", id);
+        try {
+            messageMapper.updateStatusById(id, DZConsumerMessage.STATUS_DONE);
+            logger.debug("ack event id: {}", id);
+        } catch (Exception e) {
+            throw new RuntimeException("ack fail:" + id);
+        }
     }
 }

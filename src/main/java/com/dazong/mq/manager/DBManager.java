@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -27,22 +26,27 @@ public class DBManager {
     private DataSource dataSource;
 
     public TableInfo selectTable(String dbName, String tableName) throws Exception {
-        Connection conn = dataSource.getConnection();
-        Statement stmt = conn.createStatement();
-        String sql = String.format("select `table_schema`, `table_name`, `table_comment` " +
-                "from `information_schema`.`tables` where `table_schema`='%s' and `table_name`='%s';", dbName, tableName);
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dataSource.getConnection();
+            stmt = conn.createStatement();
+            String sql = String.format("select `table_schema`, `table_name`, `table_comment` " +
+                    "from `information_schema`.`tables` where `table_schema`='%s' and `table_name`='%s';", dbName, tableName);
 
-        ResultSet rs = stmt.executeQuery(sql);
-        TableInfo tableInfo = null;
-        if (rs.next()){
-            tableInfo = new TableInfo();
-            tableInfo.setDbName(dbName);
-            tableInfo.setTableName(tableName);
-            tableInfo.setTableDesc(rs.getString("table_comment"));
+            rs = stmt.executeQuery(sql);
+            TableInfo tableInfo = null;
+            if (rs.next()){
+                tableInfo = new TableInfo();
+                tableInfo.setDbName(dbName);
+                tableInfo.setTableName(tableName);
+                tableInfo.setTableDesc(rs.getString("table_comment"));
+            }
+            return tableInfo;
+        } finally {
+            close(rs, stmt, conn);
         }
-
-        close(rs, stmt, conn);
-        return tableInfo;
     }
 
     private void close(ResultSet rs, Statement pstmt, Connection conn) {
@@ -61,41 +65,31 @@ public class DBManager {
         }
     }
 
-    public void executeSqlFile(Reader reader) {
+    public void executeSqlFile(Reader reader) throws Exception {
         executeSqlFile(reader, false, null, 0);
     }
 
-    public void executeSqlFile(Reader reader, boolean updateVersion, TableInfo tableInfo, int version) {
+    public void executeSqlFile(Reader reader, boolean updateVersion, TableInfo tableInfo, int version) throws Exception {
         Connection conn = null;
         try {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
             ScriptRunner runner = new ScriptRunner(conn);
-//        runner.setAutoCommit(true);//自动提交
             runner.setFullLineDelimiter(false);
             runner.setDelimiter(";");
             runner.runScript(reader);
-
-
             if (updateVersion){
                 updateTableVersion(conn, tableInfo, version);
             }
             conn.commit();
-        } catch (Exception e) {
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                logger.error("executeSqlFile", e1);
-            }
-            logger.error("executeSqlFile", e);
         } finally {
             close(null, null, conn);
         }
 
     }
 
-    private void updateTableVersion(Connection conn,TableInfo tableInfo, int version) throws Exception {
+    private void updateTableVersion(Connection conn, TableInfo tableInfo, int version) throws Exception {
         Statement stmt = conn.createStatement();
         String sql = String.format("ALTER TABLE `%s`.`%s` COMMENT='%s';",
                 tableInfo.getDbName(), tableInfo.getTableName(), tableInfo.getComment(version));

@@ -1,11 +1,11 @@
 package com.dazong.mq.core.consumer.activemq;
 
-import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.constant.Constants;
 import com.dazong.mq.constant.SubscribeType;
 import com.dazong.mq.core.consumer.AbstractConsumer;
 import com.dazong.mq.core.consumer.IMessageListener;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
+import com.dazong.mq.domian.Consumer;
 import com.dazong.mq.manager.MQNotifyManager;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -37,19 +37,19 @@ public class ActiveMQConsumer extends AbstractConsumer {
         // Create a Session
         Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
 
-        Map<Subscribe, IMessageListener> listenerMap = notifyManager.getListenerMap();
-        for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()) {
-            Subscribe subscribe = entry.getKey();
-            if (subscribe.type().equals(SubscribeType.ACTIVEMQ)){
+        Map<Consumer, IMessageListener> listenerMap = notifyManager.getListenerMap();
+        for (Map.Entry<Consumer, IMessageListener> entry : listenerMap.entrySet()) {
+            Consumer consumer = entry.getKey();
+            if (consumer.getType().equals(SubscribeType.ACTIVEMQ)){
                 String queueName;
-                if (subscribe.topic().length() != 0){
-                    queueName = Constants.CONSUMER_PREFIX + subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic();
+                if (consumer.isQueue()){
+                    queueName = consumer.getDestination();
                 } else {
-                    queueName = subscribe.queue();
+                    queueName = Constants.CONSUMER_PREFIX + consumer.getName() + "." + Constants.TOPIC_PREFIX + consumer.getDestination();
                 }
                 Destination destination = session.createQueue(queueName);
-                MessageConsumer consumer = session.createConsumer(destination);
-                consumer.setMessageListener(new ActiveMQListener(messageMapper, notifyManager, entry.getValue(), subscribe));
+                MessageConsumer messageConsumer = session.createConsumer(destination);
+                messageConsumer.setMessageListener(new ActiveMQListener(messageMapper, notifyManager, entry.getValue(), consumer));
             }
         }
     }

@@ -16,7 +16,7 @@ public @interface Subscribe {
 
 	String queue() default "";
 
-	String name();
+	String name() default "";
 
 	SubscribeType type() default SubscribeType.ACTIVEMQ;
 }

@@ -1,9 +1,9 @@
 package com.dazong.mq.core.consumer.activemq;
 
 import com.alibaba.fastjson.JSON;
-import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.core.consumer.IMessageListener;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
+import com.dazong.mq.domian.Consumer;
 import com.dazong.mq.domian.DZConsumerMessage;
 import com.dazong.mq.domian.DZMessage;
 import com.dazong.mq.manager.MQNotifyManager;
@@ -30,13 +30,13 @@ public class ActiveMQListener implements MessageListener {
 
     private IMessageListener listener;
 
-    private Subscribe subscribe;
+    private Consumer consumer;
 
-    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener, Subscribe subscribe){
+    public ActiveMQListener(MQMessageMapper messageMapper, MQNotifyManager notifyManager, IMessageListener listener, Consumer consumer){
         this.messageMapper = messageMapper;
         this.notifyManager = notifyManager;
         this.listener = listener;
-        this.subscribe = subscribe;
+        this.consumer = consumer;
     }
 
     @Override
@@ -44,19 +44,15 @@ public class ActiveMQListener implements MessageListener {
         TextMessage textMessage = (TextMessage) message;
         try {
             DZMessage dzMessage = JSON.parseObject(textMessage.getText(), DZMessage.class);
-            DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), subscribe.name());
+            DZConsumerMessage consumerMessage = messageMapper.queryConsumerMessageByEventId(dzMessage.getEventId(), consumer.getName());
             if (consumerMessage != null){
                 logger.debug("已有消费端消费该消息: {}", dzMessage.getEventId());
                 message.acknowledge();
                 return;
             }
             consumerMessage = new DZConsumerMessage(dzMessage);
-            consumerMessage.setName(subscribe.name());
-            if (dzMessage.isQueue()){
-                consumerMessage.setDestination(subscribe.queue());
-            } else {
-                consumerMessage.setDestination(subscribe.topic());
-            }
+            consumerMessage.setName(consumer.getName());
+            consumerMessage.setDestination(consumer.getDestination());
             messageMapper.insertConsumerMessage(consumerMessage);
             //判断该消息是否立即通知，如果是，则判断除了当前消息，该消息组中是否还有未处理的消息
             if (dzMessage.isImmediate()){

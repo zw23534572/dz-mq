@@ -1,6 +1,7 @@
 package com.dazong.mq.domian;
 
 import com.dazong.mq.dao.mapper.MQMessageMapper;
+import com.dazong.mq.exception.MQException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class Message {
             messageMapper.updateStatusById(id, DZConsumerMessage.STATUS_DONE);
             logger.debug("ack event id: {}", id);
         } catch (Exception e) {
-            throw new RuntimeException("ack fail:" + id);
+            throw new MQException("ack fail: %s", id);
         }
     }
 }

@@ -1,16 +1,20 @@
 package com.dazong.mq;
 
+import com.dangdang.ddframe.job.lite.spring.job.util.AopTargetUtils;
 import com.dazong.mq.annotation.Subscribe;
 import com.dazong.mq.core.consumer.IMessageListener;
 import com.dazong.mq.core.consumer.activemq.ActiveMQConsumer;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
+import com.dazong.mq.domian.Consumer;
 import com.dazong.mq.domian.TableInfo;
 import com.dazong.mq.manager.DBManager;
 import com.dazong.mq.manager.MQNotifyManager;
 import org.apache.ibatis.io.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +80,9 @@ public class MQAutoConfiguration implements ApplicationContextAware {
         for (String name : names){
             IMessageListener listener = context.getBean(name, IMessageListener.class);
             Subscribe subscribe = AnnotationUtils.findAnnotation(listener.getClass(), Subscribe.class);
-            mqNotifyManager.registerListener(subscribe, listener);
+            Object targetBean = AopTargetUtils.getTarget(listener);
+            Consumer consumer = Consumer.create(subscribe, targetBean.getClass());
+            mqNotifyManager.registerListener(consumer, listener);
         }
     }
 
@@ -100,7 +106,7 @@ public class MQAutoConfiguration implements ApplicationContextAware {
         try {
             init();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new FatalBeanException(e.getMessage());
         }
     }
 }

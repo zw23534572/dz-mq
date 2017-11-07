@@ -1,12 +1,17 @@
 package com.dazong.mq.domian;
 
 import com.dazong.mq.dao.mapper.MQMessageMapper;
+import com.dazong.mq.job.ReTryNotifyJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author huqichao
  * @create 2017-11-06 15:30
  **/
 public class Message {
+
+    private Logger logger = LoggerFactory.getLogger(Message.class);
 
     protected MQMessageMapper messageMapper;
 
@@ -21,5 +26,6 @@ public class Message {
 
     public void acknowledge(){
         messageMapper.updateStatusById(id, DZConsumerMessage.STATUS_DONE);
+        logger.debug("ack event id: {}", id);
     }
 }

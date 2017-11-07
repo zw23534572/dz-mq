@@ -1,7 +1,6 @@
 package com.dazong.mq.domian;
 
 import com.dazong.mq.dao.mapper.MQMessageMapper;
-import com.dazong.mq.job.ReTryNotifyJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

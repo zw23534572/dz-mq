@@ -35,13 +35,13 @@ public class MQSendManager {
         try {
             logger.debug("发送消息------>{}", message);
             jmsTemplate.setDeliveryMode(DeliveryMode.PERSISTENT);
+            Destination destination;
             if (message.isQueue()){
-                ActiveMQQueue queue = new ActiveMQQueue(message.getDestination());
-                jmsTemplate.convertAndSend(queue, JSON.toJSONString(message));
+                destination = new ActiveMQQueue(message.getDestination());
             } else {
-                ActiveMQTopic topic = new ActiveMQTopic(Constants.TOPIC_PREFIX + message.getDestination());
-                jmsTemplate.convertAndSend(topic, JSON.toJSONString(message));
+                destination= new ActiveMQTopic(Constants.TOPIC_PREFIX + message.getDestination());
             }
+            jmsTemplate.convertAndSend(destination, JSON.toJSONString(message));
             message.setStatus(DZMessage.STATUS_DONE);
             messageMapper.updateMessage(message);
         } catch (Exception e) {

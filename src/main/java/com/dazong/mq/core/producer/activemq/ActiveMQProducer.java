@@ -27,7 +27,7 @@ public class ActiveMQProducer extends AbstractProducer {
     public void sendMessage(DZMessage message) throws Exception {
         Assert.notNull(message, "消息体不能空");
         Assert.notNull(message.getBody(), "消息内容不能空");
-        Assert.notNull(message.getTopic(), "消息主题不能空");
+        Assert.notNull(message.getDestination(), "消息主题不能空");
         message.setEventId(UUID.randomUUID().toString());
         message.setStatus(DZMessage.STATUS_DOING);
         message.setSendTime(System.currentTimeMillis());

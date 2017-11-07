@@ -32,29 +32,31 @@ public class DZMessage {
     private int status;
 
     @JSONField(serialize = false)
-    private String topic;
+    private String destination;
+
+    private boolean queue;
 
     /**接收到发送消息的时间*/
     private Long sendTime;
 
     public DZMessage(){}
 
-    public DZMessage(String topic, String body){
-        this.topic = topic;
+    public DZMessage(String destination, String body){
+        this.destination = destination;
         this.body = body;
     }
 
-    public DZMessage(String topic, String body, String groupId){
-        this.topic = topic;
+    public DZMessage(String destination, String body, String groupId){
+        this.destination = destination;
         this.body = body;
         this.groupId = groupId;
     }
 
-    public static DZMessage wrap(String topic, String body) {
-        return new DZMessage(topic, body);
+    public static DZMessage wrap(String destination, String body) {
+        return new DZMessage(destination, body);
     }
 
-    public static DZMessage wrap(String topic, String body, String groupId) {
-        return new DZMessage(topic, body, groupId);
+    public static DZMessage wrap(String destination, String body, String groupId) {
+        return new DZMessage(destination, body, groupId);
     }
 }

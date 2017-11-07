@@ -52,7 +52,11 @@ public class ActiveMQListener implements MessageListener {
             }
             consumerMessage = new DZConsumerMessage(dzMessage);
             consumerMessage.setName(subscribe.name());
-            consumerMessage.setTopic(subscribe.topic());
+            if (dzMessage.isQueue()){
+                consumerMessage.setDestination(subscribe.queue());
+            } else {
+                consumerMessage.setDestination(subscribe.topic());
+            }
             messageMapper.insertConsumerMessage(consumerMessage);
             //判断该消息是否立即通知，如果是，则判断除了当前消息，该消息组中是否还有未处理的消息
             if (dzMessage.isImmediate()){

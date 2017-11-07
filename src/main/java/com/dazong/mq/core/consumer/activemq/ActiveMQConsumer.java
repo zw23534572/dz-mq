@@ -41,7 +41,12 @@ public class ActiveMQConsumer extends AbstractConsumer {
         for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()) {
             Subscribe subscribe = entry.getKey();
             if (subscribe.type().equals(SubscribeType.ACTIVEMQ)){
-                String queueName = Constants.CONSUMER_PREFIX + subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic();
+                String queueName;
+                if (subscribe.topic().length() != 0){
+                    queueName = Constants.CONSUMER_PREFIX + subscribe.name() + "." + Constants.TOPIC_PREFIX + subscribe.topic();
+                } else {
+                    queueName = subscribe.queue();
+                }
                 Destination destination = session.createQueue(queueName);
                 MessageConsumer consumer = session.createConsumer(destination);
                 consumer.setMessageListener(new ActiveMQListener(messageMapper, notifyManager, entry.getValue(), subscribe));

@@ -33,7 +33,10 @@ public class MQNotifyManager {
             logger.debug("接收消息------>{}", message);
             IMessageListener listener = null;
             for (Map.Entry<Subscribe, IMessageListener> entry : listenerMap.entrySet()){
-                if (entry.getKey().topic().equals(message.getTopic()) && entry.getKey().name().equals(message.getName())){
+                if (entry.getKey().queue().length() > 0 && entry.getKey().queue().equals(message.getDestination())){
+                    listener = entry.getValue();
+                    break;
+                } else if (entry.getKey().topic().length() > 0 && entry.getKey().topic().equals(message.getDestination()) && entry.getKey().name().equals(message.getName())){
                     listener = entry.getValue();
                     break;
                 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.dazong.mq.constant.Constants;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
 import com.dazong.mq.domian.DZMessage;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,14 @@ public class MQSendManager {
     public void send(final DZMessage message){
         try {
             logger.debug("发送消息------>{}", message);
-            ActiveMQTopic topic = new ActiveMQTopic(Constants.TOPIC_PREFIX + message.getTopic());
             jmsTemplate.setDeliveryMode(DeliveryMode.PERSISTENT);
-            jmsTemplate.convertAndSend(topic, JSON.toJSONString(message));
+            if (message.isQueue()){
+                ActiveMQQueue queue = new ActiveMQQueue(message.getDestination());
+                jmsTemplate.convertAndSend(queue, JSON.toJSONString(message));
+            } else {
+                ActiveMQTopic topic = new ActiveMQTopic(Constants.TOPIC_PREFIX + message.getDestination());
+                jmsTemplate.convertAndSend(topic, JSON.toJSONString(message));
+            }
             message.setStatus(DZMessage.STATUS_DONE);
             messageMapper.updateMessage(message);
         } catch (Exception e) {

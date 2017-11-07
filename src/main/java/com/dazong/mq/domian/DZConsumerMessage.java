@@ -21,40 +21,43 @@ public class DZConsumerMessage {
     public static final int STATUS_DONE = 1;
 
     @JSONField(serialize = false)
-    protected Long id;
+    private Long id;
 
-    protected String name;
+    private String name;
 
-    protected String eventId;
+    private String eventId;
 
-    protected String groupId;
+    private String groupId;
 
-    protected String body;
-
-    @JSONField(serialize = false)
-    protected int status;
+    private String body;
 
     @JSONField(serialize = false)
-    protected String topic;
+    private int status;
+
+    @JSONField(serialize = false)
+    private String destination;
 
     /**接收到发送消息的时间*/
-    protected Long sendTime;
+    private Long sendTime;
 
     /**接收到消息的时间*/
-    protected Long receiveTime;
+    private Long receiveTime;
 
-    protected Integer notifyCount;
+    private Integer notifyCount;
 
-    protected Date lastNotifyTime;
+    private Date lastNotifyTime;
+
+    private boolean queue;
 
     public DZConsumerMessage(){}
 
     public DZConsumerMessage(DZMessage message){
-        this.topic = message.getTopic();
+        this.destination = message.getDestination();
         this.body = message.getBody();
         this.eventId = message.getEventId();
         this.groupId = message.getGroupId();
         this.sendTime = message.getSendTime();
+        this.queue = message.isQueue();
         this.notifyCount = 0;
         this.receiveTime = System.currentTimeMillis();
     }

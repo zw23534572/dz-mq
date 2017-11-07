@@ -12,7 +12,9 @@ import java.lang.annotation.*;
 @Component
 public @interface Subscribe {
 
-	String topic();
+	String topic() default "";
+
+	String queue() default "";
 
 	String name();
 

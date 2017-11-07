@@ -70,12 +70,12 @@ public class DBManager {
     }
 
     public void executeSqlFile(Reader reader, boolean updateVersion, TableInfo tableInfo, int version) throws Exception {
-        Connection conn = null;
+        ScriptRunner runner = null;
         try {
-            conn = dataSource.getConnection();
+            Connection conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
-            ScriptRunner runner = new ScriptRunner(conn);
+            runner = new ScriptRunner(conn);
             runner.setFullLineDelimiter(false);
             runner.setDelimiter(";");
             runner.runScript(reader);
@@ -84,7 +84,9 @@ public class DBManager {
             }
             conn.commit();
         } finally {
-            close(null, null, conn);
+            if (runner != null){
+                runner.closeConnection();
+            }
         }
 
     }

@@ -54,7 +54,7 @@ public class MQNotifyManager {
 
             listener.receive(message.copy(messageMapper));
         } catch (Exception e) {
-            logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
+            throw new MQException(e, "消息处理失败: %s", message);
         } finally {
             messageMapper.updateConsumerMessage(message);
         }
@@ -66,7 +66,7 @@ public class MQNotifyManager {
             logger.debug("接收消息------>{}", message);
             listener.receive(message.copy(messageMapper));
         } catch (Exception e) {
-            logger.error("接收消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
+            throw new MQException(e, "消息处理失败: %s", message);
         } finally {
             messageMapper.updateConsumerMessage(message);
         }

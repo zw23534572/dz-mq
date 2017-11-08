@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.dazong.mq.constant.Constants;
 import com.dazong.mq.dao.mapper.MQMessageMapper;
 import com.dazong.mq.domian.DZMessage;
+import com.dazong.mq.exception.MQException;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
@@ -45,8 +46,7 @@ public class MQSendManager {
             message.setStatus(DZMessage.STATUS_DONE);
             messageMapper.updateMessage(message);
         } catch (Exception e) {
-            logger.error("send", e);
-            logger.error("发送消息失败, eventId:{}, 原因:{}", message.getEventId(), e.getCause().getMessage());
+            throw new MQException(e, "发送消息失败: ", message);
         }
     }
 }

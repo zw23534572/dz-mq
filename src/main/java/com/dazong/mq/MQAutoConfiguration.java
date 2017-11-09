@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author huqichao
@@ -103,6 +104,10 @@ public class MQAutoConfiguration implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
         try {
+            String[] names = context.getBeanNamesForAnnotation(EnableAsync.class);
+            if (names.length == 0){
+                throw new FatalBeanException("Asynchronous must be supported, please configure @EnableAsync");
+            }
             init();
         } catch (Exception e) {
             throw new FatalBeanException(e.getMessage());

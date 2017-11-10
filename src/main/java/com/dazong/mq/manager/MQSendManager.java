@@ -31,7 +31,7 @@ public class MQSendManager {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Async
+    @Async("mqTaskExecutor")
     public void send(final DZMessage message){
         try {
             logger.debug("发送消息------>{}", message);

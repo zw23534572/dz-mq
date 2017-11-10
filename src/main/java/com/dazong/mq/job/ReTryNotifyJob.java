@@ -38,6 +38,9 @@ public class ReTryNotifyJob implements SimpleJob {
         List<DZConsumerMessage> messageList = messageMapper.queryConsumerMessageByStatus(DZMessage.STATUS_DOING);
         logger.debug("定时重复通知未处理成功的消息：{}", messageList.size());
         for (DZConsumerMessage message : messageList){
+            if (message.getNotifyCount() > 10){
+                logger.warn("失败次数");
+            }
             notifyManager.notifyMessage(message);
         }
     }

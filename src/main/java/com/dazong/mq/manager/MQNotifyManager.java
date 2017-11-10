@@ -28,7 +28,7 @@ public class MQNotifyManager {
 
     private Map<Consumer, IMessageListener> listenerMap = new HashMap<>();
 
-    @Async
+    @Async("mqTaskExecutor")
     public void notifyMessage(final DZConsumerMessage message){
         try {
             logger.debug("接收消息------>{}", message);
@@ -60,7 +60,7 @@ public class MQNotifyManager {
         }
     }
 
-    @Async
+    @Async("mqTaskExecutor")
     public void notifyMessage(final IMessageListener listener, final DZConsumerMessage message){
         try {
             logger.debug("接收消息------>{}", message);

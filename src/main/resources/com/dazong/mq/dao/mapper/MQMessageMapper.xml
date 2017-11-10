@@ -66,7 +66,7 @@
     </insert>
 
     <update id="updateConsumerMessage" parameterType="com.dazong.mq.domian.DZConsumerMessage">
-        update dz_mq_consumer set notify_count=notify_count+1, last_notify_time=now() where id=#{id}
+        update dz_mq_consumer set notify_count=notify_count+1, last_notify_time=now(3) where id=#{id}
     </update>
 
     <update id="updateStatusById">

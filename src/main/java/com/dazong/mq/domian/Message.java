@@ -36,4 +36,12 @@ public class Message {
             throw new MQException("ack fail: %s", id);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", body='" + body + '\'' +
+                '}';
+    }
 }
